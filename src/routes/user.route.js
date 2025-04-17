@@ -6,10 +6,11 @@ const {
   validateCreateUser,
   validateLoginUser
 } = require('../validations/user.validation');
+const rateLimitMiddleware = require('../middleware/rateLimit.middleware');
 
+router.use(rateLimitMiddleware);
 router.post('/login', validateLoginUser, userController.loginUser);
 router.post('/newUser', validateCreateUser, userController.createUser);
-
 
 router.use(authMiddleware);
 router.get('/:id', userController.getUserById);
