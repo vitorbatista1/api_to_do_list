@@ -6,6 +6,11 @@ class TaskService {
         return await newTask.save()
    }
 
+   async alterarStatusTask(taskId, status) {
+        
+        return await taskModel.findOneAndUpdate({ _id: taskId }, { status }, { new: true })
+   }
+
 }
 
 module.exports = new TaskService()
