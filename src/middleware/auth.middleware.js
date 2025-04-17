@@ -1,21 +1,24 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+
+
+module.exports = function (req, res, next) {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      throw new Error('Token não fornecido!');
-    }
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      throw new Error('Token inválido!');
-    }
+    if (!token) return res.send(401).json({ message: 'Acesso negado' });
 
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decodedToken;
-    next();
+    try{
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.userId = decoded.id;
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: 'Token inválido' });
+    }
   } catch (error) {
-    res.status(401).json({ error: error.message || 'Requisição não autorizada' });
+    return res.status(401).json({ message: 'Acesso negado' });
   }
 };
+
+

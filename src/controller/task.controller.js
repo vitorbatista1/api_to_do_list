@@ -1,21 +1,25 @@
-const taskModel = require("../models/task.model");
 const taskService = require("../service/task.service");
 
 class TaskController {
     async createTask(req, res) {
         try{
-            const task = await taskService.createTask(req.body);
+            const taskData = {
+                ...req.body,
+                user: req.userId
+            };
+            const task = await taskService.createTask(taskData);
+
             res.status(201).json(
                 {
-                    name: task.title,
-                    description: task.description,
+                    nome: task.title,
+                    descricao: task.description,
                     status: task.status
-                }
-            )
-        } catch (error) {
-            res.status(500).json({ error: error.message });
+                });
+            }catch(error){
+                res.status(500).json({ error: error.message }); 
+            }
         }
-    }
 }
+
 
 module.exports = new TaskController();
